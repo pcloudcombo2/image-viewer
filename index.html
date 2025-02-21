@@ -1,0 +1,109 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Image Viewer</title>
+  <style>
+    body,
+    main {
+      background-color: gray;
+      text-align: center;
+      color: #ffffff;
+    }
+
+    main {
+      width: 95%;
+      min-height: 95vh;
+      margin: auto;
+    }
+
+    #image-container {
+      display: flex;
+      flex-flow: row wrap;
+      justify-content: center;
+    }
+
+    .image {
+      max-height: 45vh;
+      height: auto;
+      margin: 1vh;
+      object-fit: contain;
+      border-radius: 1vh;
+    }
+
+    #top {
+      position: fixed;
+      bottom: 20vh;
+      right: 1em;
+      padding: 0.05em 0.5em;
+      border: none;
+      border-radius: 1vh;
+      font-size: x-large
+    }
+
+    #top:hover {
+      background-color: #c5e1ff;
+    }
+
+    button#fullscreen {
+      position: absolute;
+      top: 25%;
+      right: 2vw;
+      z-index: 100000000000000000;
+      padding: 1em 2em;
+      background-color: ButtonFace;
+      color: ButtonText;
+      font: -moz-button;
+      text-align: center;
+      opacity: 0.25;
+    }
+
+    button#scroll-select {
+      position: absolute;
+      top: 40%;
+      right: 2vw;
+      z-index: 100000000000000000;
+      padding: 1em 1em;
+      background-color: ButtonFace;
+      color: ButtonText;
+      font: -moz-button;
+      text-align: center;
+      opacity: 0.25;
+    }
+
+    #urls-container {
+      display: none;
+    }
+
+    #urls-textarea {
+      width: 70%;
+    }
+
+    #urls-cancel {
+      color: red;
+    }
+  </style>
+</head>
+
+<body>
+  <main id="container">
+    <button id="urls">URLs</button>
+    <input type="file" id="input" multiple />
+    <article id="urls-container">
+      <textarea id="urls-textarea" rows="10"></textarea>
+      <section id="urls-buttons">
+        <button id="urls-cancel">Cancel</button>
+        <button id="urls-submit">Submit</button>
+      </section>
+    </article>
+    <article id="image-container"></article>
+    <button id="top">⬆</button>
+  </main>
+  <script src="scripts/osd.js"></script>
+  <script src="scripts/main.js" type="module"></script>
+</body>
+
+</html>
