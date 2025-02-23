@@ -173,7 +173,6 @@ function resetImg(viewport) {
 }
 
 function handleFiles(e, imageContainer, osdContainer) {
-  console.log(e);
   const files = e.currentTarget.files;
   let page = 0;
   tiles = [];
