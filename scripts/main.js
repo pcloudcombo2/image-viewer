@@ -6,7 +6,7 @@ Modal.addToDom();
 addHandlers();
 const imageContainer = document.getElementById('image-container');
 const osdContainer = document.getElementById('osd-container');
-window.addEventListener('message', (event) => Query.check(event.data, imageContainer, osdContainer));
+window.addEventListener('message', (event) => Query.check(event, imageContainer, osdContainer));
 
 function addHandlers() {
   document.getElementById('fullscreen').addEventListener('click', Handlers.fullscreenAlt);
