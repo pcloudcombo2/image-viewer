@@ -9,7 +9,7 @@ const osdContainer = document.getElementById('osd-container');
 window.addEventListener('load', () => {
   setTimeout(() => {
     console.log('ready');
-    window.opener.postMessage('ready');
+
   }, 100);
 });
 window.addEventListener('message', (event) => Query.check(event, imageContainer, osdContainer));
@@ -22,3 +22,4 @@ function addHandlers() {
   document.getElementById('urls-cancel').addEventListener('click', Handlers.URLs.hide);
   document.getElementById('urls-submit').addEventListener('click', () => Handlers.URLs.submit(imageContainer, osdContainer));
 }
+window.opener.postMessage('ready', '*');
