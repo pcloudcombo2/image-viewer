@@ -7,8 +7,10 @@ addHandlers();
 const imageContainer = document.getElementById('image-container');
 const osdContainer = document.getElementById('osd-container');
 window.addEventListener('load', () => {
-  console.log('ready');
-  window.opener.postMessage('ready');
+  setTimeout(() => {
+    console.log('ready');
+    window.opener.postMessage('ready');
+  }, 100);
 });
 window.addEventListener('message', (event) => Query.check(event, imageContainer, osdContainer));
 
