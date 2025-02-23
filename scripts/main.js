@@ -6,13 +6,8 @@ Modal.addToDom();
 addHandlers();
 const imageContainer = document.getElementById('image-container');
 const osdContainer = document.getElementById('osd-container');
-window.addEventListener('load', () => {
-  setTimeout(() => {
-    console.log('ready');
-
-  }, 1000);
-});
 window.addEventListener('message', (event) => Query.check(event, imageContainer, osdContainer));
+window.opener.postMessage('ready', '*');
 
 function addHandlers() {
   document.getElementById('fullscreen').addEventListener('click', Handlers.fullscreenAlt);
@@ -22,4 +17,3 @@ function addHandlers() {
   document.getElementById('urls-cancel').addEventListener('click', Handlers.URLs.hide);
   document.getElementById('urls-submit').addEventListener('click', () => Handlers.URLs.submit(imageContainer, osdContainer));
 }
-window.opener.postMessage('ready', '*');
