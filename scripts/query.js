@@ -2,6 +2,7 @@ import Handlers from './handlers.js';
 
 function check(data, imageContainer, osdContainer) {
   console.log(data);
+  console.log(data.data);
   process(data.data.urls[0]);
   const params = new URLSearchParams(location.search);
   if (params.has('url')) process(params.get('url'));
