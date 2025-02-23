@@ -12,6 +12,7 @@ function check(data, imageContainer, osdContainer) {
 }
 
 function process(urls) {
+  console.log(urls);
   document.getElementById('urls-textarea').value = urls;
 }
 
