@@ -1,7 +1,7 @@
 import Handlers from './handlers.js';
 
-function check(imageContainer, osdContainer) {
-  console.log(sessionStorage.getItem('userData'));
+function check(data, imageContainer, osdContainer) {
+  console.log(data);
   const params = new URLSearchParams(location.search);
   if (params.has('url')) process(params.get('url'));
   else if (params.has('urls')) process(decode(params.get('urls')));
