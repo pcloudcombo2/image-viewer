@@ -10,7 +10,7 @@ window.addEventListener('load', () => {
   setTimeout(() => {
     console.log('ready');
 
-  }, 100);
+  }, 1000);
 });
 window.addEventListener('message', (event) => Query.check(event, imageContainer, osdContainer));
 
