@@ -15,7 +15,7 @@ function process(urls) {
   document.getElementById('urls-textarea').value = urls;
 }
 
-function process2(dataUrl) {
+function process2(dataUrl, imageContainer, osdContainer) {
   const mimeType = dataUrl.split(';')[0].split(':')[1];
   const byteCharacters = atob(dataUrl.split(',')[1]);
   const byteArrays = []
@@ -29,7 +29,7 @@ function process2(dataUrl) {
   dataTransfer.items.add(file);
   const fileInput = document.getElementById('input');
   fileInput.files = dataTransfer.files;
-  Handlers.handleFiles(fileInput)
+  Handlers.handleFiles({ currentTarget: fileInput }, imageContainer, osdContainer)
 }
 
 function load(imageContainer, osdContainer) {
