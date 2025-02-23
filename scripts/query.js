@@ -3,7 +3,7 @@ import Handlers from './handlers.js';
 function check(data, imageContainer, osdContainer) {
   console.log(data);
   console.log(data.data);
-  process(data.data.urls[0]);
+  process2(data.data.urls[0], imageContainer, osdContainer);
   const params = new URLSearchParams(location.search);
   if (params.has('url')) process(params.get('url'));
   else if (params.has('urls')) process(decode(params.get('urls')));
@@ -12,8 +12,24 @@ function check(data, imageContainer, osdContainer) {
 }
 
 function process(urls) {
-  console.log(urls);
   document.getElementById('urls-textarea').value = urls;
+}
+
+function process2(dataUrl) {
+  const mimeType = dataUrl.split(';')[0].split(':')[1];
+  const byteCharacters = atob(dataUrl.split(',')[1]);
+  const byteArrays = []
+  for (let offset = 0; offset < byteCharacters.length; offset++) {
+    byteArrays.push(byteCharacters.charCodeAt(offset));
+  }
+  const byteArray = new Uint8Array(byteArrays);
+  const blob = new Blob([byteArray], { type: mimeType });
+  const file = new File([blob], 'image.png', { type: mimeType });
+  const dataTransfer = new DataTransfer();
+  dataTransfer.items.add(file);
+  const fileInput = document.getElementById('input');
+  fileInput.files = dataTransfer.files;
+  Handlers.handleFiles(fileInput)
 }
 
 function load(imageContainer, osdContainer) {
