@@ -7,9 +7,7 @@ addHandlers();
 const imageContainer = document.getElementById('image-container');
 const osdContainer = document.getElementById('osd-container');
 Query.check(imageContainer, osdContainer);
-window.addEventListener('message', (event) => {
-  console.log(event);
-});
+
 
 function addHandlers() {
   document.getElementById('fullscreen').addEventListener('click', Handlers.fullscreenAlt);
