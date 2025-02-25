@@ -1,13 +1,13 @@
 import Modal from './modal.js';
 import Handlers from './handlers.js';
-import Query from './query.js';
+import Preload from './preload.js';
 
 Modal.addToDom();
 addHandlers();
 const imageContainer = document.getElementById('image-container');
 const osdContainer = document.getElementById('osd-container');
-window.addEventListener('message', (event) => Query.check(event, imageContainer, osdContainer));
-window.opener.postMessage('ready', '*');
+window.addEventListener('message', (event) => Preload.check(event.data, imageContainer, osdContainer));
+if (window.opener) window.opener.postMessage('ready', '*');
 
 function addHandlers() {
   document.getElementById('fullscreen').addEventListener('click', Handlers.fullscreenAlt);
