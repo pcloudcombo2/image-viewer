@@ -3,9 +3,7 @@ import Handlers from './handlers.js';
 function check(data, imageContainer, osdContainer) {
   if (!data?.urls) return;
   let index = data?.index ? Number(data.index) : 0;
-  console.log(data);
-  console.log(data.data);
-  process2(data.data.urls[0], imageContainer, osdContainer);
+  process2(data.urls[0], imageContainer, osdContainer);
   const params = new URLSearchParams(location.search);
   if (params.has('url')) process(params.get('url'));
   else if (params.has('urls')) process(decode(params.get('urls')));
