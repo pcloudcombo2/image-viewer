@@ -1,6 +1,8 @@
 import Modal from './modal.js';
 
 let tiles;
+let fail = new Set();
+let done = new Set();
 
 class OSD {
   static middle = function (info) {
@@ -77,7 +79,7 @@ class URLs {
     URLs.container.style.display = 'none';
   }
 
-  static submit = function (imageContainer, osdContainer) {
+  static submit = async function (imageContainer, osdContainer) {
     let value = URLs.textarea.value?.trim();
     let urls = value.split('\n');
     if (!value || !urls.length) return;
@@ -86,6 +88,7 @@ class URLs {
     imageContainer.innerHTML = '';
     for (const url of urls) {
       if (!url.startsWith('http')) continue;
+      // if (url.includes('coomer')) await URLs.wait(0.5);
       tiles.push({
         type: 'image',
         url
@@ -94,7 +97,14 @@ class URLs {
     }
     URLs.textarea.value = '';
     URLs.hide();
+    monitor(urls.length);
   }
+
+  static wait = (secs) => {
+    return new Promise(async (resolve, reject) => {
+      setTimeout(() => resolve(), secs * 1000);
+    });
+  };
 }
 
 function top(event) {
@@ -192,11 +202,13 @@ function addImageToContainer(url, page, imageContainer, osdContainer) {
   img.src = url;
   img.dataset.page = page;
   img.className = 'image';
-  img.onclick = (e) => { showImg(e.currentTarget.dataset?.page, osdContainer) };
-  imageContainer.appendChild(img)
+  img.onclick = (e) => { showImg(e.currentTarget.src, osdContainer) };
+  img.onerror = (e) => { fail.add(url); };
+  img.onload = (e) => { done.add(url); };
+  imageContainer.appendChild(img);
 }
 
-function showImg(page, osdContainer) {
+function showImg(src, osdContainer) {
   osdContainer.innerHTML = '';
   Modal.show();
   const viewer = OpenSeadragon({
@@ -216,7 +228,7 @@ function showImg(page, osdContainer) {
     gestureSettingsMouse: {
       scrollToZoom: true
     },
-    initialPage: Number(page)
+    initialPage: tiles.findIndex(v => v.url == src)
   });
   viewer.addHandler('canvas-contextmenu', OSD.next);
   viewer.addHandler('canvas-double-click', OSD.previous);
@@ -228,6 +240,30 @@ function showImg(page, osdContainer) {
 
 function viewerOpen(info) {
   document.getElementById('scroll-select').onclick = () => toggleScroll(info);
+}
+
+function monitor(total, cnt = 0, inc = 0) {
+  let node = document.getElementById('status');
+  if (done.size == total) return node.textContent = 'All finshed';
+  if (inc > 30) {
+    node.textContent = `Seems stuck. ${done.size}/${total} loaded. ${fail.size} failed. Click to remove. Context to retry.`;
+    return remove()
+  }
+  if (fail.size + done.size != total) {
+    node.textContent = `${done.size}/${total} loaded`;
+  }
+  return setTimeout(monitor, 500, total, done.size, cnt === done.size ? ++inc : 0);
+}
+
+function retry() {
+
+}
+
+function remove() {
+  for (const src of fail) {
+    document.querySelector(`img[src="${src}"]`)?.remove();
+    tiles.splice(tiles.findIndex(v => v.url === src), 1);
+  }
 }
 
 export default {
