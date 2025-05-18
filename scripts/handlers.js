@@ -79,26 +79,65 @@ class URLs {
     URLs.container.style.display = 'none';
   }
 
-  static submit = async function (imageContainer, osdContainer) {
+  static submit = function (imageContainer, osdContainer) {
     let value = URLs.textarea.value?.trim();
     let urls = value.split('\n');
     if (!value || !urls.length) return;
-    let page = 0;
+    done.clear();
+    fail.clear();
     tiles = [];
     imageContainer.innerHTML = '';
     for (const url of urls) {
       if (!url.startsWith('http')) continue;
-      // if (url.includes('coomer')) await URLs.wait(0.5);
       tiles.push({
         type: 'image',
         url
       });
-      addImageToContainer(url, page++, imageContainer, osdContainer);
+      addImageToContainer(url, imageContainer, osdContainer);
     }
     URLs.textarea.value = '';
     URLs.hide();
-    monitor(urls.length);
+    URLs.monitor(urls.length);
   }
+
+  static monitor = (total, cnt = 0, inc = 0) => {
+    let node = document.getElementById('status');
+    if (done.size == total) return node.textContent = '';
+    if (inc > 120) {
+      node.textContent = `Seems stuck. ${done.size}/${total} loaded. ${fail.size} failed. Click to remove. Context to retry.`;
+      return this.addLis(node);
+    }
+    if (fail.size + done.size != total) {
+      node.textContent = `${done.size}/${total} loaded`;
+    }
+    return setTimeout(this.monitor, 500, total, done.size, cnt === done.size ? ++inc : 0);
+  };
+
+  static addLis = (node) => {
+    node.addEventListener('click', this.remove);
+    node.addEventListener('contextmenu', this.retry);
+  };
+
+  static retry = async (e) => {
+    prevent(e);
+    e.currentTarget.textContent = '';
+    done.clear();
+    await URLs.wait(1);
+    this.monitor(fail.size);
+    for (const src of fail) {
+      let img = document.querySelector(`img[src="${src}"]`);
+      img.src = src;
+      fail.delete(src);
+    }
+  };
+
+  static remove = () => {
+    for (const src of fail) {
+      document.querySelector(`img[src="${src}"]`)?.remove();
+      tiles.splice(tiles.findIndex(v => v.url === src), 1);
+    }
+    document.getElementById('status').textContent = '';
+  };
 
   static wait = (secs) => {
     return new Promise(async (resolve, reject) => {
@@ -184,7 +223,6 @@ function resetImg(viewport) {
 
 function handleFiles(e, imageContainer, osdContainer) {
   const files = e.currentTarget.files;
-  let page = 0;
   tiles = [];
   imageContainer.innerHTML = '';
   for (const file of files) {
@@ -193,18 +231,17 @@ function handleFiles(e, imageContainer, osdContainer) {
       type: 'image',
       url
     });
-    addImageToContainer(url, page++, imageContainer, osdContainer);
+    addImageToContainer(url, imageContainer, osdContainer);
   }
 }
 
-function addImageToContainer(url, page, imageContainer, osdContainer) {
+function addImageToContainer(url, imageContainer, osdContainer) {
   const img = document.createElement('img');
   img.src = url;
-  img.dataset.page = page;
   img.className = 'image';
   img.onclick = (e) => { showImg(e.currentTarget.src, osdContainer) };
   img.onerror = (e) => { fail.add(url); };
-  img.onload = (e) => { done.add(url); };
+  img.onload = (e) => { done.add(url); fail.delete(url) };
   imageContainer.appendChild(img);
 }
 
@@ -240,30 +277,6 @@ function showImg(src, osdContainer) {
 
 function viewerOpen(info) {
   document.getElementById('scroll-select').onclick = () => toggleScroll(info);
-}
-
-function monitor(total, cnt = 0, inc = 0) {
-  let node = document.getElementById('status');
-  if (done.size == total) return node.textContent = 'All finshed';
-  if (inc > 30) {
-    node.textContent = `Seems stuck. ${done.size}/${total} loaded. ${fail.size} failed. Click to remove. Context to retry.`;
-    return remove()
-  }
-  if (fail.size + done.size != total) {
-    node.textContent = `${done.size}/${total} loaded`;
-  }
-  return setTimeout(monitor, 500, total, done.size, cnt === done.size ? ++inc : 0);
-}
-
-function retry() {
-
-}
-
-function remove() {
-  for (const src of fail) {
-    document.querySelector(`img[src="${src}"]`)?.remove();
-    tiles.splice(tiles.findIndex(v => v.url === src), 1);
-  }
 }
 
 export default {
